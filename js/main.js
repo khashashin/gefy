@@ -56,7 +56,7 @@ function createEventListeners() {
         });
 
         imageMetaInfoButton.addEventListener('click', function() {
-            openPhotoMetaInfo(() => {
+            openPhotoMetaInfo(this, () => {
                 document.querySelector('.modal').querySelector('.icon.close').addEventListener('click', closePhotoMetaInfo);
             });
         });
@@ -177,16 +177,20 @@ function closePhotoComparisonWindow() {
             }
         );
     }
+
+    restoreComparisonState(() => {
+        return;
+    });
 }
 
-function openPhotoMetaInfo(callback) {
+function openPhotoMetaInfo(that, callback) {
     disableScroll();
 
     const modal = document.querySelector('.modal');
     const photo = document.createElement('img');
     const closeIcon = document.createElement('img');
 
-    photo.src = currentEditedPhoto;
+    photo.src = that.parentElement.parentElement.querySelector('.card-body').getAttribute('data-path');
     photo.style.display = 'none';
     closeIcon.classList.addMany('icon close');
     closeIcon.src = '../assets/icons/close.svg';
