@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', main, false);
 const body = document.querySelector('body');
 const html = document.querySelector('html');
 
+let currentOriginalPhoto = null;
+let currentEditedPhoto = null;
+
 function main() {
     let container = document.querySelector('.container');
 
@@ -42,43 +45,34 @@ function createEventListeners() {
         const imageMetaInfoButton = currentImage.parentElement.querySelector('.card-footer').querySelector('.icon.info');
 
         currentImage.addEventListener('click', function() {
-            const data = {
-                path: this.getAttribute('data-path'),
-                pathEdited: this.getAttribute('data-path-edited'),
-            }
+            currentOriginalPhoto = this.getAttribute('data-path');
+            currentEditedPhoto = this.getAttribute('data-path-edited');
 
-            openPhotoComparisonWindow(data, () => {
+            openPhotoComparisonWindow(() => {
                 document.querySelector('.modal').querySelector('.icon.close').addEventListener('click', closePhotoComparisonWindow);
-                document.querySelector('.modal').querySelector('.icon.compare').addEventListener('click', comparePhoto(data));
-                document.querySelector('.modal').querySelector('.icon.slide').addEventListener('click', slidePhoto(data));
+                document.querySelector('.modal').querySelector('.icon.compare').addEventListener('click', comparePhoto);
+                document.querySelector('.modal').querySelector('.icon.slide').addEventListener('click', slidePhoto);
             });
         });
 
         imageMetaInfoButton.addEventListener('click', function() {
-            const data = {
-                path: this.getAttribute('data-path'),
-                pathEdited: this.getAttribute('data-path-edited'),
-            }
-
-            openPhotoMetaInfo(data, () => {
+            openPhotoMetaInfo(() => {
                 document.querySelector('.modal').querySelector('.icon.close').addEventListener('click', closePhotoMetaInfo);
             });
         });
     }
 }
 
-function openPhotoComparisonWindow(data, callback) {
+function openPhotoComparisonWindow(callback) {
     disableScroll();
 
+    sideBySideComparison();
+
     const mainWindow = document.querySelector('.modal');
-    const originalPhoto = document.createElement('img');
-    const editedPhoto = document.createElement('img');
     const closeIcon = document.createElement('img');
     const compareIcon = document.createElement('img');
     const slideIcon = document.createElement('img');
 
-    originalPhoto.classList.add('photo');
-    editedPhoto.classList.add('photo');
     closeIcon.classList.addMany('icon close');
     closeIcon.src = '../assets/icons/close.svg';
     compareIcon.classList.addMany('icon compare');
@@ -87,17 +81,78 @@ function openPhotoComparisonWindow(data, callback) {
     slideIcon.src = '../assets/icons/slide.svg';
 
     if (mainWindow) {
-        originalPhoto.src = data.path;
-        editedPhoto.src = data.pathEdited;
-        mainWindow.querySelector('.modal-body').appendChild(originalPhoto);
-        mainWindow.querySelector('.modal-body').appendChild(editedPhoto);
         mainWindow.querySelector('.modal-footer').appendChild(compareIcon);
         mainWindow.querySelector('.modal-footer').appendChild(slideIcon);
         mainWindow.querySelector('.modal-footer').appendChild(closeIcon);
         mainWindow.style.display = 'block';
         return callback();
     }
+}
 
+function sideBySideComparison() {
+
+    restoreComparisonState((() => {
+        const mainWindow = document.querySelector('.modal');
+        const originalPhoto = document.createElement('img');
+        const editedPhoto = document.createElement('img');
+    
+        originalPhoto.classList.addMany('photo side-by-side');
+        editedPhoto.classList.addMany('photo side-by-side');
+    
+        if (mainWindow) {
+            originalPhoto.src = currentOriginalPhoto;
+            editedPhoto.src = currentEditedPhoto;
+            mainWindow.querySelector('.modal-body').appendChild(originalPhoto);
+            mainWindow.querySelector('.modal-body').appendChild(editedPhoto);
+        }
+    }));
+}
+
+function sliderComparison() {
+
+    restoreComparisonState(() => {
+        const modal = document.querySelector('.modal-body');
+        const originalPhoto = document.createElement('img');
+        const editedPhoto = document.createElement('img');
+        const editedPhotoWrapper = document.createElement('div');
+        if (modal) {
+            originalPhoto.src = currentOriginalPhoto;
+            editedPhoto.src = currentEditedPhoto;
+            originalPhoto.classList.add('photo');
+            editedPhoto.classList.add('photo');
+
+            modal.classList.add('beer-slider');
+            modal.id = 'slider';
+            modal.dataset.beerLabel = 'before';
+            modal.appendChild(originalPhoto);
+
+            editedPhotoWrapper.classList.add('beer-reveal');
+            editedPhotoWrapper.dataset.beerLabel = 'after';
+            editedPhotoWrapper.appendChild(editedPhoto);
+            modal.appendChild(editedPhotoWrapper);
+
+            new BeerSlider(document.getElementById('slider'));
+        }
+    })
+}
+
+function restoreComparisonState(callback) {
+    const modal = document.querySelector('.modal');
+    if (modal === null) {
+        return;
+    }
+
+    const modalBody = modal.querySelector('.modal-body');
+    // clear modal body
+    while (modalBody.firstChild) {
+        modalBody.removeChild(modalBody.firstChild);
+    }
+    modalBody.id = '';
+    modalBody.classList.remove('beer-slider');
+    modalBody.classList.remove('beer-ready');
+    delete modalBody.dataset.beerLabel;
+
+    return callback();
 }
 
 function closePhotoComparisonWindow() {
@@ -124,14 +179,14 @@ function closePhotoComparisonWindow() {
     }
 }
 
-function openPhotoMetaInfo(data, callback) {
+function openPhotoMetaInfo(callback) {
     disableScroll();
 
     const modal = document.querySelector('.modal');
     const photo = document.createElement('img');
     const closeIcon = document.createElement('img');
 
-    photo.src = data.path;
+    photo.src = currentEditedPhoto;
     photo.style.display = 'none';
     closeIcon.classList.addMany('icon close');
     closeIcon.src = '../assets/icons/close.svg';
@@ -203,12 +258,12 @@ function closePhotoMetaInfo() {
     }
 }
 
-function comparePhoto(data) {
-    
+function comparePhoto() {
+    sideBySideComparison();
 }
 
-function slidePhoto(data) {
-    
+function slidePhoto() {
+    sliderComparison();
 }
 
 function disableScroll() {

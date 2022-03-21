@@ -161,6 +161,11 @@ img.icon {
     font-size: calc(var(--font-size-small) - var(--spacing-small));
 }
 
+.beer-slider[data-beer-label]:after,
+.beer-reveal[data-beer-label]:after {
+    color: var(--color-dark);
+}
+
 img.close, img.compare, img.slide {
     width: 30px;
     height: 30px;
@@ -169,7 +174,7 @@ img.close, img.compare, img.slide {
     color: var(--color-light);
 }
 
-.modal img.photo {
+.modal img.photo.side-by-side {
     max-width: 100%;
 }
 
