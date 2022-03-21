@@ -41,6 +41,14 @@
     --height-small: 10rem;
 }
 
+* {
+    box-sizing: border-box;
+}
+
+img {
+    box-sizing: content-box;
+}
+
 html, body {
     padding: 0;
     margin: 0;
@@ -138,9 +146,22 @@ img.icon {
     width: calc(100vw - var(--spacing-large));
 }
 
+.modal .modal-content .modal-body.meta-info {
+    background-color: var(--color-light);
+    border-radius: var(--border-radius-base);
+    padding: var(--spacing-small);
+
+    color: var(--color-dark);
+}
+
+.modal .modal-content .modal-body p {
+    font-size: calc(var(--font-size-small) - var(--spacing-small));
+}
+
 img.close, img.compare, img.slide {
     width: 30px;
     height: 30px;
+    margin: 0 var(--spacing-small);
 
     color: var(--color-light);
 }
