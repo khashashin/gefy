@@ -152,6 +152,8 @@ img.icon {
     padding: var(--spacing-small);
 
     color: var(--color-dark);
+
+    display: block;
 }
 
 .modal .modal-content .modal-body p {
@@ -168,4 +170,34 @@ img.close, img.compare, img.slide {
 
 .modal img.photo {
     max-width: 100%;
+}
+
+
+@media (min-width: 768px) {
+    .modal .modal-content .modal-body {
+        width: calc(90vw - var(--spacing-large) * 2);
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        padding-left: var(--spacing-large);
+        padding-right: var(--spacing-large);
+    }
+
+    .container.photos {
+        display: grid;
+        grid-template-columns: 320px 320px 320px;
+        grid-template-rows: 320px 320px 320px;
+    }
+
+    .card {
+        width: calc(400px - var(--spacing-large) * 2);
+    }
+
+    .modal .modal-content .modal-body {
+        display: flex;
+        justify-content: center;
+        width: calc(55vw - var(--spacing-large) * 2);
+    }
 }
