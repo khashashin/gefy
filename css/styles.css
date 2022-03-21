@@ -97,6 +97,7 @@ html, body {
     width: 100%;
 
     color: var(--color-dark);
+    font-size: calc(var(--font-size-base) * 0.6);
 }
 
 .card .card-footer p {
