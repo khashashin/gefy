@@ -1,15 +1,15 @@
 [{
     "data": "Name: Blum\n",
-    "path": "assets/img/e/e1.jpg",
-    "pathEdited": "assets/img/e/e1.jpg"
+    "path": "assets/img/e/e1-orig.png",
+    "pathEdited": "assets/img/e/e1-edit.png"
 }, {
     "data": "Name: Blum\n",
-    "path": "assets/img/e/e2.jpg",
-    "pathEdited": "assets/img/e/e2.jpg"
+    "path": "assets/img/e/e2-orig.png",
+    "pathEdited": "assets/img/e/e2-edit.png"
 }, {
     "data": "Name: Blum\n",
-    "path": "assets/img/e/e3.jpg",
-    "pathEdited": "assets/img/e/e3.jpg"
+    "path": "assets/img/e/e3-orig.png",
+    "pathEdited": "assets/img/e/e3-edit.png"
 }, {
     "data": "Name: Khasbulatov\n",
     "path": "assets/img/y/y4.jpg",
