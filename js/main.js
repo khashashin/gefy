@@ -7,13 +7,27 @@ let currentOriginalPhoto = null;
 let currentEditedPhoto = null;
 
 function main() {
-    let container = document.querySelector('.container');
+    const mainWrapper = document.querySelector('main');
+    // Prepare sections
+    const sectionEleasar = document.createElement('section');
+    const sectionYusuf = document.createElement('section');
+    const sectionFranz = document.createElement('section');
+
+    sectionEleasar.classList.add('photos', 'eleasar');
+    sectionYusuf.classList.add('photos', 'yusuf');
+    sectionFranz.classList.add('photos', 'franz');
+
+    // Append sections to the main element
+    mainWrapper.appendChild(sectionEleasar);
+    mainWrapper.appendChild(sectionYusuf);
+    mainWrapper.appendChild(sectionFranz);
 
     fetch('assets/data-v2.json', {
         method: 'GET',
     }).then(response => {
         return response.json();
     }).then(data => {
+
         for (let i = 0; i < data.length; i++) {
 
             let card = `
@@ -28,23 +42,36 @@ function main() {
                 </div>
             `;
 
-            container.innerHTML += card;
+            // if data[i].path includes 'assets/img/e/'
+            if (data[i].path.includes('assets/img/e/')) {
+                sectionEleasar.innerHTML += card;
+            }
+            // if data[i].path includes 'assets/img/y/'
+            else if (data[i].path.includes('assets/img/y/')) {
+                sectionYusuf.innerHTML += card;
+            }
+            // if data[i].path includes 'assets/img/f/'
+            else if (data[i].path.includes('assets/img/f/')) {
+                sectionFranz.innerHTML += card;
+            }
         }
     }).catch(error => {
         console.log(error);
     }).finally(() => {
         createEventListeners();
+        const isLoading = document.querySelector('p#loading');
+        isLoading.style.display = 'none';
     })
 }
 
 function createEventListeners() {
-    const images = document.querySelectorAll('.card-body');
+    const cards = document.querySelectorAll('.card-body');
     
-    for (let i = 0; i < images.length; i++) {
-        const currentImage = images[i];
-        const imageMetaInfoButton = currentImage.parentElement.querySelector('.card-footer').querySelector('.icon.info');
+    for (let i = 0; i < cards.length; i++) {
+        const currentCard = cards[i];
+        const imageMetaInfoButton = currentCard.parentElement.querySelector('.card-footer').querySelector('.icon.info');
 
-        currentImage.addEventListener('click', function() {
+        currentCard.addEventListener('click', function() {
             currentOriginalPhoto = this.getAttribute('data-path');
             currentEditedPhoto = this.getAttribute('data-path-edited');
 
