@@ -1,25 +1,47 @@
-[{
+[
+  {
     "data": "Name: Blum\n",
     "path": "assets/img/e/e1-orig.jpg",
     "pathEdited": "assets/img/e/e1-edit.jpg"
-}, {
+  },
+  {
     "data": "Name: Blum\n",
     "path": "assets/img/e/e2-orig.jpg",
     "pathEdited": "assets/img/e/e2-edit.jpg"
-}, {
+  },
+  {
     "data": "Name: Blum\n",
     "path": "assets/img/e/e3-orig.jpg",
     "pathEdited": "assets/img/e/e3-edit.jpg"
-}, {
+  },
+  {
     "data": "Name: Khasbulatov\n",
     "path": "assets/img/y/y4.jpg",
     "pathEdited": "assets/img/y/y4.jpg"
-}, {
+  },
+  {
     "data": "Name: Khasbulatov\n",
     "path": "assets/img/y/y2.jpg",
     "pathEdited": "assets/img/y/y2.jpg"
-}, {
+  },
+  {
     "data": "Name: Khasbulatov\n",
     "path": "assets/img/y/y3.jpg",
     "pathEdited": "assets/img/y/y3.jpg"
-}]
+  },
+  {
+    "data": "Name: Kilchenmann\n",
+    "path": "assets/img/f/DSC01177.JPG",
+    "pathEdited": "assets/img/f/DSC01177_edit.JPG"
+  },
+  {
+    "data": "Name: Kilchenmann\n",
+    "path": "assets/img/f/DSC01194.JPG",
+    "pathEdited": "assets/img/f/DSC01194_edit.JPG"
+  },
+  {
+    "data": "Name: Kilchenmann\n",
+    "path": "assets/img/f/DSC01204.JPG",
+    "pathEdited": "assets/img/f/DSC01204_edit.JPG"
+  }
+]
