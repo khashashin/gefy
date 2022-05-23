@@ -49,7 +49,8 @@ img {
     box-sizing: content-box;
 }
 
-html, body {
+html,
+body {
     padding: 0;
     margin: 0;
     height: 100%;
@@ -77,6 +78,10 @@ nav a {
 
 nav div a {
     font-size: var(--font-size-small);
+}
+
+footer {
+    padding-bottom: var(--spacing-base);
 }
 
 .card {
@@ -172,7 +177,9 @@ img.icon {
     color: var(--color-dark);
 }
 
-img.close, img.compare, img.slide {
+img.close,
+img.compare,
+img.slide {
     width: 30px;
     height: 30px;
     margin: 0 var(--spacing-small);
@@ -182,6 +189,15 @@ img.close, img.compare, img.slide {
 
 .modal img.photo.side-by-side {
     max-width: 100%;
+}
+
+.pdf.gefy {
+    text-align: center;
+}
+
+.pdf.gefy embed {
+    width: 100%;
+    min-height: 1100px;
 }
 
 

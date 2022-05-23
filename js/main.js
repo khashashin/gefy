@@ -18,9 +18,9 @@ function main() {
     sectionFranz.classList.add('photos', 'franz');
 
     // Append sections to the main element
-    mainWrapper.appendChild(sectionEleasar);
-    mainWrapper.appendChild(sectionYusuf);
-    mainWrapper.appendChild(sectionFranz);
+    mainWrapper.prepend(sectionFranz);
+    mainWrapper.prepend(sectionYusuf);
+    mainWrapper.prepend(sectionEleasar);
 
     fetch('assets/data-v2.json', {
         method: 'GET',
