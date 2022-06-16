@@ -168,10 +168,6 @@ img.icon {
     display: block;
 }
 
-.modal .modal-content .modal-body p {
-    font-size: calc(var(--font-size-small) - var(--spacing-small));
-}
-
 .beer-slider[data-beer-label]:after,
 .beer-reveal[data-beer-label]:after {
     color: var(--color-dark);

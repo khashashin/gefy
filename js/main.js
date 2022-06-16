@@ -2,13 +2,67 @@ document.addEventListener('DOMContentLoaded', main, false);
 
 const body = document.querySelector('body');
 const html = document.querySelector('html');
+const modal = document.querySelector('.modal');
+const closeIcon = modal.querySelector('img.icon.compare');
+const compareIcon = modal.querySelector('img.icon.slide');
+const slideIcon = modal.querySelector('img.icon.close');
 
 let currentOriginalPhoto = null;
 let currentEditedPhoto = null;
 
+document.querySelector('.modal').querySelector('.icon.close').addEventListener('click', closePhotoComparisonWindow);
+document.querySelector('.modal').querySelector('.icon.compare').addEventListener('click', comparePhoto);
+document.querySelector('.modal').querySelector('.icon.slide').addEventListener('click', slidePhoto);
+
+async function openPhotoModal(originalPath, editedPath) {
+    currentEditedPhoto = editedPath;
+    currentOriginalPhoto = originalPath;
+    
+    await sideBySideComparison();
+    modal.style.display = 'block';
+
+    return Promise.resolve();
+}
+
+async function displayMetaInfo(originalPath, editedPath) {
+    console.log(originalPath, editedPath);
+}
+
+async function addCardClickEventListener(card) {
+    // disableScroll();
+
+    const cardBody = card.querySelector('.card-body');
+    const photo = cardBody.querySelector('img');
+
+    const originalPath = cardBody.dataset.path
+    const editedPath = cardBody.dataset.pathEdited
+
+    photo.addEventListener('click', async function() {
+        await openPhotoModal(originalPath, editedPath);
+    });
+
+    const cardFooter = card.querySelector('.card-footer');
+    const infoButton = cardFooter.querySelector('img');
+
+    infoButton.addEventListener('click', async function() {
+        await displayMetaInfo(originalPath, editedPath);
+    });
+}
+
+async function createCardAppendToSection(card, section) {
+    const c = document.createElement('div');
+    c.classList.add('card');
+    c.innerHTML = card;
+    section.appendChild(c);
+    
+    await addCardClickEventListener(c);
+
+    return Promise.resolve();
+}
+
 function main() {
     const mainWrapper = document.querySelector('main');
-    // Prepare sections
+    
     const sectionEleasar = document.createElement('section');
     const sectionYusuf = document.createElement('section');
     const sectionFranz = document.createElement('section');
@@ -17,54 +71,53 @@ function main() {
     sectionYusuf.classList.add('photos', 'yusuf');
     sectionFranz.classList.add('photos', 'franz');
 
-    // Append sections to the main element
     mainWrapper.prepend(sectionFranz);
     mainWrapper.prepend(sectionYusuf);
     mainWrapper.prepend(sectionEleasar);
 
+    // Load data from local file data.json
     fetch('assets/data-v2.json', {
         method: 'GET',
     }).then(response => {
         return response.json();
     }).then(data => {
 
+        // Data contains list of paths to original and edited photos
         for (let i = 0; i < data.length; i++) {
 
             let card = `
-                <div class="card">
-                    <div class="card-body" data-path="${data[i].path}" data-path-edited="${data[i].pathEdited}">
-                        <img src="${data[i].path}" alt="${data[i].data}">
-                    </div>
-                    <div class="card-footer">
-                        <p>${data[i].data}</p>
-                        <img class="icon info" src="../assets/icons/info.svg" data-path="${data[i].path}" data-path-edited="${data[i].pathEdited}">
-                    </div>
+                <div class="card-body" data-path="${data[i].path}" data-path-edited="${data[i].pathEdited}">
+                    <img src="${data[i].path}" alt="${data[i].data}">
+                </div>
+                <div class="card-footer">
+                    <p>${data[i].data}</p>
+                    <img class="icon info" src="../assets/icons/info.svg" data-path="${data[i].path}" data-path-edited="${data[i].pathEdited}">
                 </div>
             `;
 
-            // if data[i].path includes 'assets/img/e/'
+            // Append cards to the appropriate section
             if (data[i].path.includes('assets/img/e/')) {
-                sectionEleasar.innerHTML += card;
+                createCardAppendToSection(card, sectionEleasar);
             }
-            // if data[i].path includes 'assets/img/y/'
+            
             else if (data[i].path.includes('assets/img/y/')) {
-                sectionYusuf.innerHTML += card;
+                createCardAppendToSection(card, sectionYusuf);
             }
-            // if data[i].path includes 'assets/img/f/'
+            
             else if (data[i].path.includes('assets/img/f/')) {
-                sectionFranz.innerHTML += card;
+                createCardAppendToSection(card, sectionFranz);
             }
         }
     }).catch(error => {
         console.log(error);
     }).finally(() => {
-        createEventListeners();
+        //createEventListeners();
         const isLoading = document.querySelector('p#loading');
         isLoading.style.display = 'none';
     })
 }
 
-function createEventListeners() {
+async function createEventListeners() {
     const cards = document.querySelectorAll('.card-body');
     
     for (let i = 0; i < cards.length; i++) {
@@ -76,9 +129,6 @@ function createEventListeners() {
             currentEditedPhoto = this.getAttribute('data-path-edited');
 
             openPhotoComparisonWindow(() => {
-                document.querySelector('.modal').querySelector('.icon.close').addEventListener('click', closePhotoComparisonWindow);
-                document.querySelector('.modal').querySelector('.icon.compare').addEventListener('click', comparePhoto);
-                document.querySelector('.modal').querySelector('.icon.slide').addEventListener('click', slidePhoto);
             });
         });
 
@@ -116,59 +166,53 @@ function openPhotoComparisonWindow(callback) {
     }
 }
 
-function sideBySideComparison() {
+async function sideBySideComparison() {
 
-    restoreComparisonState((() => {
-        const mainWindow = document.querySelector('.modal');
-        const originalPhoto = document.createElement('img');
-        const editedPhoto = document.createElement('img');
+    await restoreComparisonState();
+
+    const originalPhoto = document.createElement('img');
+    const editedPhoto = document.createElement('img');
     
-        originalPhoto.classList.addMany('photo side-by-side');
-        editedPhoto.classList.addMany('photo side-by-side');
-    
-        if (mainWindow) {
-            originalPhoto.src = currentOriginalPhoto;
-            editedPhoto.src = currentEditedPhoto;
-            mainWindow.querySelector('.modal-body').appendChild(originalPhoto);
-            mainWindow.querySelector('.modal-body').appendChild(editedPhoto);
-        }
-    }));
+    originalPhoto.classList.add('photo', 'side-by-side');
+    editedPhoto.classList.add('photo', 'side-by-side');
+    originalPhoto.src = currentOriginalPhoto;
+    editedPhoto.src = currentEditedPhoto;
+
+    modal.querySelector('.modal-body').appendChild(originalPhoto);
+    modal.querySelector('.modal-body').appendChild(editedPhoto);
+
+    return Promise.resolve();
 }
 
-function sliderComparison() {
+async function sliderComparison() {
 
-    restoreComparisonState(() => {
-        const modal = document.querySelector('.modal-body');
-        const originalPhoto = document.createElement('img');
-        const editedPhoto = document.createElement('img');
-        const editedPhotoWrapper = document.createElement('div');
-        if (modal) {
-            originalPhoto.src = currentOriginalPhoto;
-            editedPhoto.src = currentEditedPhoto;
-            originalPhoto.classList.add('photo');
-            editedPhoto.classList.add('photo');
+    const originalPhoto = document.createElement('img');
+    const editedPhoto = document.createElement('img');
+    const editedPhotoWrapper = document.createElement('div');
 
-            modal.classList.add('beer-slider');
-            modal.id = 'slider';
-            modal.dataset.beerLabel = 'before';
-            modal.appendChild(originalPhoto);
+    await restoreComparisonState();
+    
+    originalPhoto.src = currentOriginalPhoto;
+    editedPhoto.src = currentEditedPhoto;
+    originalPhoto.classList.add('photo');
+    editedPhoto.classList.add('photo');
 
-            editedPhotoWrapper.classList.add('beer-reveal');
-            editedPhotoWrapper.dataset.beerLabel = 'after';
-            editedPhotoWrapper.appendChild(editedPhoto);
-            modal.appendChild(editedPhotoWrapper);
+    modal.classList.add('beer-slider');
+    modal.id = 'slider';
+    modal.dataset.beerLabel = 'before';
+    modal.querySelector('.modal-body').appendChild(originalPhoto);
 
-            new BeerSlider(document.getElementById('slider'));
-        }
-    })
+    editedPhotoWrapper.classList.add('beer-reveal');
+    editedPhotoWrapper.dataset.beerLabel = 'after';
+    editedPhotoWrapper.appendChild(editedPhoto);
+    modal.querySelector('.modal-body').appendChild(editedPhotoWrapper);
+
+    new BeerSlider(document.getElementById('slider'));
+
+    return Promise.resolve();
 }
 
-function restoreComparisonState(callback) {
-    const modal = document.querySelector('.modal');
-    if (modal === null) {
-        return;
-    }
-
+async function restoreComparisonState() {
     const modalBody = modal.querySelector('.modal-body');
     // clear modal body
     while (modalBody.firstChild) {
@@ -179,35 +223,20 @@ function restoreComparisonState(callback) {
     modalBody.classList.remove('beer-ready');
     delete modalBody.dataset.beerLabel;
 
-    return callback();
+    return Promise.resolve();
 }
 
-function closePhotoComparisonWindow() {
-    enableScroll();
+async function closePhotoComparisonWindow() {
+    await enableScroll();
 
-    const mainWindow = document.querySelector('.modal');
+    modal.style.display = 'none';
+    modal.querySelectorAll('.photo')
+        .forEach(photo => {
+            photo.remove();
+        }
+    );
 
-    if (mainWindow) {
-        mainWindow.style.display = 'none';
-        mainWindow.querySelectorAll('.photo')
-            .forEach(photo => {
-                photo.remove();
-            }
-        );
-        mainWindow.querySelector('.icon.close').removeEventListener('click', closePhotoComparisonWindow);
-        mainWindow.querySelector('.icon.compare').removeEventListener('click', comparePhoto);
-        mainWindow.querySelector('.icon.slide').removeEventListener('click', slidePhoto);
-
-        mainWindow.querySelectorAll('.icon')
-            .forEach(icon => {
-                icon.remove();
-            }
-        );
-    }
-
-    restoreComparisonState(() => {
-        return;
-    });
+    await restoreComparisonState();
 }
 
 function openPhotoMetaInfo(that, callback) {
@@ -289,26 +318,32 @@ function closePhotoMetaInfo() {
     }
 }
 
-function comparePhoto() {
-    sideBySideComparison();
+async function comparePhoto() {
+    await sideBySideComparison();
+
+    modal.style.display = 'block';
+
+    return Promise.resolve();
 }
 
-function slidePhoto() {
-    sliderComparison();
+async function slidePhoto() {
+    await sliderComparison();
+
+    modal.style.display = 'block';
+
+    return Promise.resolve();
 }
 
 function disableScroll() {
     body.style.overflowX = 'hidden';
-    body.style.overflowY = 'auto';
     html.style.overflowX = 'hidden';
-    html.style.overflowY = 'auto';
 }
 
-function enableScroll() {
+async function enableScroll() {
     body.style.overflowX = 'auto';
-    body.style.overflowY = 'auto';
     html.style.overflowX = 'auto';
-    html.style.overflowY = 'auto';
+
+    return Promise.resolve();
 }
 
 DOMTokenList.prototype.addMany = function(classes) {
