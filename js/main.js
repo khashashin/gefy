@@ -110,8 +110,8 @@ function main() {
         }
     }).catch(error => {
         console.log(error);
-    }).finally(() => {
-        //createEventListeners();
+    }).finally(async () => {
+        createEventListeners();
         const isLoading = document.querySelector('p#loading');
         isLoading.style.display = 'none';
     })
@@ -124,12 +124,11 @@ async function createEventListeners() {
         const currentCard = cards[i];
         const imageMetaInfoButton = currentCard.parentElement.querySelector('.card-footer').querySelector('.icon.info');
 
-        currentCard.addEventListener('click', function() {
+        currentCard.addEventListener('click', async function() {
             currentOriginalPhoto = this.getAttribute('data-path');
             currentEditedPhoto = this.getAttribute('data-path-edited');
 
-            openPhotoComparisonWindow(() => {
-            });
+            await openPhotoComparisonWindow();
         });
 
         imageMetaInfoButton.addEventListener('click', function() {
@@ -140,30 +139,12 @@ async function createEventListeners() {
     }
 }
 
-function openPhotoComparisonWindow(callback) {
+async function openPhotoComparisonWindow() {
     disableScroll();
 
-    sideBySideComparison();
+    await sideBySideComparison();
 
-    const mainWindow = document.querySelector('.modal');
-    const closeIcon = document.createElement('img');
-    const compareIcon = document.createElement('img');
-    const slideIcon = document.createElement('img');
-
-    closeIcon.classList.addMany('icon close');
-    closeIcon.src = '../assets/icons/close.svg';
-    compareIcon.classList.addMany('icon compare');
-    compareIcon.src = '../assets/icons/compare.svg';
-    slideIcon.classList.addMany('icon slide');
-    slideIcon.src = '../assets/icons/slide.svg';
-
-    if (mainWindow) {
-        mainWindow.querySelector('.modal-footer').appendChild(compareIcon);
-        mainWindow.querySelector('.modal-footer').appendChild(slideIcon);
-        mainWindow.querySelector('.modal-footer').appendChild(closeIcon);
-        mainWindow.style.display = 'block';
-        return callback();
-    }
+    return Promise.resolve();
 }
 
 async function sideBySideComparison() {
@@ -197,9 +178,9 @@ async function sliderComparison() {
     originalPhoto.classList.add('photo');
     editedPhoto.classList.add('photo');
 
-    modal.classList.add('beer-slider');
-    modal.id = 'slider';
-    modal.dataset.beerLabel = 'before';
+    modal.querySelector('.modal-body').classList.add('beer-slider');
+    modal.querySelector('.modal-body').id = 'slider';
+    modal.querySelector('.modal-body').dataset.beerLabel = 'before';
     modal.querySelector('.modal-body').appendChild(originalPhoto);
 
     editedPhotoWrapper.classList.add('beer-reveal');
