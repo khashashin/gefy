@@ -2,30 +2,32 @@ document.addEventListener('DOMContentLoaded', main, false);
 
 const body = document.querySelector('body');
 const html = document.querySelector('html');
-const modal = document.querySelector('.modal');
-const closeIcon = modal.querySelector('img.icon.compare');
-const compareIcon = modal.querySelector('img.icon.slide');
-const slideIcon = modal.querySelector('img.icon.close');
+
+const modalPhotos = document.getElementById('modal-photos');
+const modalMeta = document.getElementById('modal-meta');
 
 let currentOriginalPhoto = null;
 let currentEditedPhoto = null;
 
-document.querySelector('.modal').querySelector('.icon.close').addEventListener('click', closePhotoComparisonWindow);
-document.querySelector('.modal').querySelector('.icon.compare').addEventListener('click', comparePhoto);
-document.querySelector('.modal').querySelector('.icon.slide').addEventListener('click', slidePhoto);
+modalPhotos.querySelector('.icon.close').addEventListener('click', closePhotoComparisonWindow);
+modalPhotos.querySelector('.icon.compare').addEventListener('click', comparePhoto);
+modalPhotos.querySelector('.icon.slide').addEventListener('click', slidePhoto);
+modalMeta.querySelector('.icon.close').addEventListener('click', closePhotoMetaInfo)
 
 async function openPhotoModal(originalPath, editedPath) {
     currentEditedPhoto = editedPath;
     currentOriginalPhoto = originalPath;
     
     await sideBySideComparison();
-    modal.style.display = 'block';
+    modalPhotos.style.display = 'block';
 
     return Promise.resolve();
 }
 
-async function displayMetaInfo(originalPath, editedPath) {
-    console.log(originalPath, editedPath);
+async function displayMetaInfo(originalPath) {
+    await openPhotoMetaInfo(originalPath);
+
+    return Promise.resolve();
 }
 
 async function addCardClickEventListener(card) {
@@ -111,7 +113,7 @@ function main() {
     }).catch(error => {
         console.log(error);
     }).finally(async () => {
-        createEventListeners();
+        //createEventListeners();
         const isLoading = document.querySelector('p#loading');
         isLoading.style.display = 'none';
     })
@@ -131,10 +133,8 @@ async function createEventListeners() {
             await openPhotoComparisonWindow();
         });
 
-        imageMetaInfoButton.addEventListener('click', function() {
-            openPhotoMetaInfo(this, () => {
-                document.querySelector('.modal').querySelector('.icon.close').addEventListener('click', closePhotoMetaInfo);
-            });
+        imageMetaInfoButton.addEventListener('click', async function() {
+            await openPhotoMetaInfo(this);
         });
     }
 }
@@ -159,8 +159,8 @@ async function sideBySideComparison() {
     originalPhoto.src = currentOriginalPhoto;
     editedPhoto.src = currentEditedPhoto;
 
-    modal.querySelector('.modal-body').appendChild(originalPhoto);
-    modal.querySelector('.modal-body').appendChild(editedPhoto);
+    modalPhotos.querySelector('.modal-body').appendChild(originalPhoto);
+    modalPhotos.querySelector('.modal-body').appendChild(editedPhoto);
 
     return Promise.resolve();
 }
@@ -178,15 +178,15 @@ async function sliderComparison() {
     originalPhoto.classList.add('photo');
     editedPhoto.classList.add('photo');
 
-    modal.querySelector('.modal-body').classList.add('beer-slider');
-    modal.querySelector('.modal-body').id = 'slider';
-    modal.querySelector('.modal-body').dataset.beerLabel = 'before';
-    modal.querySelector('.modal-body').appendChild(originalPhoto);
+    modalPhotos.querySelector('.modal-body').classList.add('beer-slider');
+    modalPhotos.querySelector('.modal-body').id = 'slider';
+    modalPhotos.querySelector('.modal-body').dataset.beerLabel = 'before';
+    modalPhotos.querySelector('.modal-body').appendChild(originalPhoto);
 
     editedPhotoWrapper.classList.add('beer-reveal');
     editedPhotoWrapper.dataset.beerLabel = 'after';
     editedPhotoWrapper.appendChild(editedPhoto);
-    modal.querySelector('.modal-body').appendChild(editedPhotoWrapper);
+    modalPhotos.querySelector('.modal-body').appendChild(editedPhotoWrapper);
 
     new BeerSlider(document.getElementById('slider'));
 
@@ -194,7 +194,7 @@ async function sliderComparison() {
 }
 
 async function restoreComparisonState() {
-    const modalBody = modal.querySelector('.modal-body');
+    const modalBody = modalPhotos.querySelector('.modal-body');
     // clear modal body
     while (modalBody.firstChild) {
         modalBody.removeChild(modalBody.firstChild);
@@ -210,8 +210,8 @@ async function restoreComparisonState() {
 async function closePhotoComparisonWindow() {
     await enableScroll();
 
-    modal.style.display = 'none';
-    modal.querySelectorAll('.photo')
+    modalPhotos.style.display = 'none';
+    modalPhotos.querySelectorAll('.photo')
         .forEach(photo => {
             photo.remove();
         }
@@ -220,89 +220,64 @@ async function closePhotoComparisonWindow() {
     await restoreComparisonState();
 }
 
-function openPhotoMetaInfo(that, callback) {
+async function openPhotoMetaInfo(originalPath) {
     disableScroll();
+    const isLoading = document.getElementById('meta-info-loading');
+    isLoading.style.display = 'block';
 
-    const modal = document.querySelector('.modal');
-    const photo = document.createElement('img');
-    const closeIcon = document.createElement('img');
+    const img = document.createElement('img');
+    img.src = originalPath;
 
-    photo.src = that.parentElement.parentElement.querySelector('.card-body').getAttribute('data-path');
-    photo.style.display = 'none';
-    closeIcon.classList.addMany('icon close');
-    closeIcon.src = '../assets/icons/close.svg';
-
-    modal.querySelector('.modal-body').classList.add('meta-info');
-
-    if (modal) {
-        EXIF.getData(photo, function() {
-            const metaData = {
-                brightnessValue: this.exifdata.BrightnessValue,
-                date: this.exifdata.DateTimeOriginal,
-                exposureMode: this.exifdata.ExposureMode,
-                exposureProgram: this.exifdata.ExposureProgram,
-                exposureTime: this.exifdata.ExposureTime,
-                fNumber: this.exifdata.FNumber,
-                flash: this.exifdata.Flash,
-                focalLength: this.exifdata.FocalLength,
-                focalLengthIn35mmFilm: this.exifdata.FocalLengthIn35mmFilm,
-                iso: this.exifdata.ISOSpeedRatings,
-                lightSource: this.exifdata.LightSource,
-                make: this.exifdata.Make,
-                maxApertureValue: this.exifdata.MaxApertureValue,
-                meteringMode: this.exifdata.MeteringMode,
-                model: this.exifdata.Model,
-                orientation: this.exifdata.Orientation,
-                sceneCaptureType: this.exifdata.SceneCaptureType,
-                software: this.exifdata.Software,
-                whiteBalance: this.exifdata.WhiteBalance
-            }
-
-            const metaInfoHeader = document.createElement('h4');
-            metaInfoHeader.innerHTML = 'Meta info';
-            modal.querySelector('.modal-body').appendChild(metaInfoHeader);
-
-            for (let key in metaData) {
-                const metaInfoItem = document.createElement('p');
-                metaInfoItem.classList.addMany('p-0 m-0');
-                metaInfoItem.innerHTML = `${key}: ${metaData[key]}`;
-                modal.querySelector('.modal-body').appendChild(metaInfoItem);
-            }
-
-            modal.querySelector('.modal-footer').appendChild(closeIcon);
-            modal.style.display = 'block';
-            return callback();
-        });
-    }
+    getMetaInformation(img, () => {
+        isLoading.style.display = 'none';
+    });
 }
 
-function closePhotoMetaInfo() {
-    enableScroll();
+async function getMetaInformation(photo, callback) {
+    // get image by image path from photo
+    const blobImage = new Blob([photo.src], {type: 'image/jpeg'});
 
-    const modal = document.querySelector('.modal');
-    const modalBody = modal.querySelector('.modal-body');
-    if (modal) {
-        modal.style.display = 'none';
-        modalBody.querySelectorAll('p')
-            .forEach(p => {
-                p.remove();
-            }
-        );
-        modal.querySelector('.icon.close').removeEventListener('click', closePhotoMetaInfo);
-        modal.querySelectorAll('.icon')
-            .forEach(icon => {
-                icon.remove();
-            }
-        );
-        modalBody.querySelector('h4').remove();
-        modalBody.classList.remove('meta-info');
-    }
+    const fr = new FileReader();
+
+    const tags = await ExifReader.load(blobImage);
+    console.log(tags);
+
+    callback();
+
+/*     EXIF.getData(photo, function() {
+        const metaData = {
+            iso: this.exifdata.ISOSpeedRatings,
+            maxApertureValue: this.exifdata.MaxApertureValue,
+            exposureTime: this.exifdata.ExposureTime
+        };
+
+        for (let key in metaData) {
+            const metaInfoItem = document.createElement('p');
+            metaInfoItem.classList.add('p-0', 'm-0');
+            metaInfoItem.innerHTML = `${key}: ${metaData[key]}`;
+            modalMeta.querySelector('.modal-body').appendChild(metaInfoItem);
+        }
+        modalMeta.style.display = 'block';
+
+        return callback();
+    }); */
+}
+
+async function closePhotoMetaInfo() {
+    await enableScroll();
+
+    modalMeta.style.display = 'none';
+    modalMeta.querySelectorAll('p')
+        .forEach(p => {
+            p.remove();
+        }
+    );
 }
 
 async function comparePhoto() {
     await sideBySideComparison();
 
-    modal.style.display = 'block';
+    modalPhotos.style.display = 'block';
 
     return Promise.resolve();
 }
@@ -310,7 +285,7 @@ async function comparePhoto() {
 async function slidePhoto() {
     await sliderComparison();
 
-    modal.style.display = 'block';
+    modalPhotos.style.display = 'block';
 
     return Promise.resolve();
 }
@@ -325,18 +300,4 @@ async function enableScroll() {
     html.style.overflowX = 'auto';
 
     return Promise.resolve();
-}
-
-DOMTokenList.prototype.addMany = function(classes) {
-    var array = classes.split(' ');
-    for (var i = 0, length = array.length; i < length; i++) {
-      this.add(array[i]);
-    }
-}
-
-DOMTokenList.prototype.removeMany = function(classes) {
-    var array = classes.split(' ');
-    for (var i = 0, length = array.length; i < length; i++) {
-      this.remove(array[i]);
-    }
 }

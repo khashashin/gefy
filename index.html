@@ -40,7 +40,7 @@
         <p>&copy; 2020 GEFY</p>
     </footer>
 
-    <div class="modal">
+    <div id="modal-photos" class="modal">
         <div class="modal-content">
             <div class="modal-body mb-2">
             </div>
@@ -52,7 +52,20 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <div id="modal-meta" class="modal">
+        <div class="modal-content">
+            <div class="modal-body mb-2 meta-info">
+                <h4>Meta info</h4>
+                <i id="meta-info-loading">Loading meta information...</i>
+            </div>
+            <div class="modal-footer">
+                <img class="icon close" src="../assets/icons/close.svg">
+            </div>
+        </div>
+    </div>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/exif-js"></script> -->
+    <script src="js/exif-reader.js"></script>
     <script src="https://unpkg.com/beerslider/dist/BeerSlider.js"></script>
     <script src="js/main.js"></script>
 </body>
