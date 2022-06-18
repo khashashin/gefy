@@ -208,9 +208,12 @@ img.slide {
     text-align: center;
 }
 
+.pdf.gefy a {
+    display: block;
+}
+
 .pdf.gefy embed {
-    width: 100%;
-    min-height: 1100px;
+    display: none;
 }
 
 
@@ -218,6 +221,16 @@ img.slide {
     #modal-photos .modal-content .modal-body,
     #modal-meta .modal-content .modal-body {
         width: calc(90vw - var(--spacing-large) * 2);
+    }
+
+    .pdf.gefy embed {
+        display: block;
+        width: 100%;
+        min-height: 1100px;
+    }
+
+    .pdf.gefy a {
+        display: none;
     }
 }
 
