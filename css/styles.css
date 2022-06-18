@@ -110,6 +110,7 @@ footer {
     justify-content: space-between;
 
     width: 100%;
+    min-height: 140px;
 
     color: var(--color-dark);
     font-size: calc(var(--font-size-base) * 0.6);

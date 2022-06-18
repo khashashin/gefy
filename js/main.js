@@ -78,7 +78,7 @@ function main() {
     mainWrapper.prepend(sectionEleasar);
 
     // Load data from local file data.json
-    fetch('assets/data-v2.json', {
+    fetch('assets/data.json', {
         method: 'GET',
     }).then(response => {
         return response.json();
@@ -92,7 +92,7 @@ function main() {
                     <img src="${data[i].path}" alt="${data[i].data}">
                 </div>
                 <div class="card-footer">
-                    <p>${data[i].data}</p>
+                    <p>${data[i].data}<br>${data[i].description}</p>
                     <img class="icon info" src="../assets/icons/info.svg" data-path="${data[i].path}" data-path-edited="${data[i].pathEdited}">
                 </div>
             `;

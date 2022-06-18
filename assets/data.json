@@ -1,41 +1,55 @@
-{
-    "e": [{
+[{
         "data": "Name: Blum\n",
-        "path": "assets/img/e/e1.jpg"
-    }, {
+        "path": "assets/img/e/e1-orig.jpg",
+        "pathEdited": "assets/img/e/e1-edit.jpg",
+        "description": ""
+    },
+    {
         "data": "Name: Blum\n",
-        "path": "assets/img/e/e2.jpg"
-    }, {
+        "path": "assets/img/e/e2-orig.jpg",
+        "pathEdited": "assets/img/e/e2-edit.jpg",
+        "description": ""
+    },
+    {
         "data": "Name: Blum\n",
-        "path": "assets/img/e/e3.jpg"
-    }, {
-        "data": "Name: Blum\n",
-        "path": "assets/img/e/e4.jpg"
-    }, {
-        "data": "Name: Blum\n",
-        "path": "assets/img/e/e5.jpg"
-    }, {
-        "data": "Name: Blum\n",
-        "path": "assets/img/e/e6.jpg"
-    }],
-    "f": [{
-        "data": "Name: Kilchenmann\n",
-        "path": "assets/img/f/f1.jpg"
-    }, {
-        "data": "Name: Kilchenmann\n",
-        "path": "assets/img/f/f2.jpg"
-    }, {
-        "data": "Name: Kilchenmann\n",
-        "path": "assets/img/f/f3.jpg"
-    }],
-    "y": [{
+        "path": "assets/img/e/e3-orig.jpg",
+        "pathEdited": "assets/img/e/e3-edit.jpg",
+        "description": ""
+    },
+    {
         "data": "Name: Khasbulatov\n",
-        "path": "assets/img/y/y1.jpg"
-    }, {
+        "path": "assets/img/y/y1.jpg",
+        "pathEdited": "assets/img/y/y1-edited.jpg",
+        "description": "Kastanie.\n Leider konnte ich den Hintergrund nicht mehr unscharf machen. Nach dem Hinzufügen von Helligkeit und Kontrast wurde das Foto umgewandelt."
+    },
+    {
         "data": "Name: Khasbulatov\n",
-        "path": "assets/img/y/y2.jpg"
-    }, {
+        "path": "assets/img/y/y2.jpg",
+        "pathEdited": "assets/img/y/y2-edited.jpg",
+        "description": "Bolzen.\n Dieses Objekt war schwer zu bemerken, da es mit dem Rohr, an das es geschweisst ist, verschmilzt, aber dank des richtigen Kamerawinkels konnte ich es hervorheben."
+    },
+    {
         "data": "Name: Khasbulatov\n",
-        "path": "assets/img/y/y3.jpg"
-    }]
-}
+        "path": "assets/img/y/y3.jpg",
+        "pathEdited": "assets/img/y/y3-edited.jpg",
+        "description": "Besenstielaufhänger.\n Es war schwierig, ein geeignetes Objekt für Fotos zu finden. Das, was meine Aufmerksamkeit erregte, war ein Besenstielaufhänger. Ich habe versucht, sie auf dem Foto gut zu positionieren."
+    },
+    {
+        "data": "Name: Kilchenmann\n",
+        "path": "assets/img/f/DSC01177.JPG",
+        "pathEdited": "assets/img/f/DSC01177_edit.jpg",
+        "description": ""
+    },
+    {
+        "data": "Name: Kilchenmann\n",
+        "path": "assets/img/f/DSC01194.JPG",
+        "pathEdited": "assets/img/f/DSC01194_edit.jpg",
+        "description": ""
+    },
+    {
+        "data": "Name: Kilchenmann\n",
+        "path": "assets/img/f/DSC01204.JPG",
+        "pathEdited": "assets/img/f/DSC01204_edit.jpg",
+        "description": ""
+    }
+]
