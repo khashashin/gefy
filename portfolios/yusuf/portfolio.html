@@ -30,12 +30,71 @@
         <!-- js content -->
         <!-- photos -->
         <p id="loading">Loading...</p>
+        <section>
+            <h2>Film</h2>
+            <h3>Szene 1</h3>
+            <div class="embed-responsive embed-responsive-16by9">
+                <video width="100%" class="embed-responsive-item" src="video/szene_1.mp4" allowfullscreen
+                    controls></video>
+            </div>
+        </section>
+        <section>
+            <h2>Dokumente</h2>
+            <h3>Datentypen</h3>
+            <iframe
+                src="https://docs.google.com/viewer?url=https://inf-152-19e-gefy.iet-gibb.net/portfolios/yusuf/docs/Datentypen - Yusup Khasbulatov.pdf&amp;embedded=true"
+                width="100%" height="780" style="border: none;"></iframe>
+            <a href="docs/Datentypen - Yusup Khasbulatov.pdf">
+                Download Datentypen PDF
+            </a>
+            <h3>Frameworks Plugins Skripte</h3>
+            <iframe
+                src="https://docs.google.com/viewer?url=https://inf-152-19e-gefy.iet-gibb.net/portfolios/yusuf/docs/Frameworks Plugins Skripte - Yusup Khasbulatov.pdf&amp;embedded=true"
+                width="100%" height="780" style="border: none;"></iframe>
+            <a href="docs/Frameworks Plugins Skripte - Yusup Khasbulatov.pdf">
+                Download Frameworks Plugins Skripte PDF
+            </a>
+            <h3>Gesetzliche Grundlage</h3>
+            <iframe
+                src="https://docs.google.com/viewer?url=https://inf-152-19e-gefy.iet-gibb.net/portfolios/yusuf/docs/Gesetzliche Grundlage - Yusup Khasbulatov.pdf&amp;embedded=true"
+                width="100%" height="780" style="border: none;"></iframe>
+            <a href="docs/Gesetzliche Grundlage - Yusup Khasbulatov.pdf">
+                Download Gesetzliche Grundlage PDF
+            </a>
+        </section>
     </main>
 
     <footer class="text-center">
         <p>&copy; 2020 GEFY</p>
     </footer>
 
+    <div id="modal-photos" class="modal">
+        <div class="modal-content">
+            <div class="modal-body mb-2">
+            </div>
+            <div class="modal-footer">
+                <img class="icon compare" src="../../assets/icons/compare.svg">
+                <img class="icon slide" src="../../assets/icons/slide.svg">
+                <img class="icon close" src="../../assets/icons/close.svg">
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-meta" class="modal">
+        <div class="modal-content">
+            <div class="modal-body mb-2 meta-info">
+                <h4>Meta info</h4>
+                <i id="meta-info-loading">Loading meta information...</i>
+            </div>
+            <div class="modal-footer">
+                <img class="icon close" src="../../assets/icons/close.svg">
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/exif-reader.js"></script>
+    <script src="https://unpkg.com/beerslider/dist/BeerSlider.js"></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
