@@ -137,6 +137,13 @@ footer {
     border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
 }
 
+iframe {
+    border: none;
+
+    width: 100%;
+    min-height: 600px;
+}
+
 img.icon {
     width: 24px;
     height: 24px;
