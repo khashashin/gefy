@@ -127,6 +127,8 @@ footer {
     margin-top: 0;
 
     padding: var(--spacing-small);
+
+    cursor: pointer;
 }
 
 .card img {

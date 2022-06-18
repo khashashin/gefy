@@ -113,30 +113,9 @@ function main() {
     }).catch(error => {
         console.log(error);
     }).finally(async () => {
-        //createEventListeners();
         const isLoading = document.querySelector('p#loading');
         isLoading.style.display = 'none';
     })
-}
-
-async function createEventListeners() {
-    const cards = document.querySelectorAll('.card-body');
-    
-    for (let i = 0; i < cards.length; i++) {
-        const currentCard = cards[i];
-        const imageMetaInfoButton = currentCard.parentElement.querySelector('.card-footer').querySelector('.icon.info');
-
-        currentCard.addEventListener('click', async function() {
-            currentOriginalPhoto = this.getAttribute('data-path');
-            currentEditedPhoto = this.getAttribute('data-path-edited');
-
-            await openPhotoComparisonWindow();
-        });
-
-        imageMetaInfoButton.addEventListener('click', async function() {
-            await openPhotoMetaInfo(this);
-        });
-    }
 }
 
 async function openPhotoComparisonWindow() {
@@ -228,39 +207,40 @@ async function openPhotoMetaInfo(originalPath) {
     const img = document.createElement('img');
     img.src = originalPath;
 
-    getMetaInformation(img, () => {
+    getMetaInformation(img).then(() => {
         isLoading.style.display = 'none';
     });
 }
 
-async function getMetaInformation(photo, callback) {
-    // get image by image path from photo
-    const blobImage = new Blob([photo.src], {type: 'image/jpeg'});
+async function getMetaInformation(photo) {
+    // fetch image by image path from photo
+    const image = await fetch(photo.src);
 
-    const fr = new FileReader();
+    const tags = await ExifReader.load(image.url);
 
-    const tags = await ExifReader.load(blobImage);
-    console.log(tags);
-
-    callback();
-
-/*     EXIF.getData(photo, function() {
-        const metaData = {
-            iso: this.exifdata.ISOSpeedRatings,
-            maxApertureValue: this.exifdata.MaxApertureValue,
-            exposureTime: this.exifdata.ExposureTime
-        };
-
-        for (let key in metaData) {
-            const metaInfoItem = document.createElement('p');
-            metaInfoItem.classList.add('p-0', 'm-0');
-            metaInfoItem.innerHTML = `${key}: ${metaData[key]}`;
-            modalMeta.querySelector('.modal-body').appendChild(metaInfoItem);
+    const metaData = {
+        iso: {
+            value: tags.ISOSpeedRatings.value,
+        },
+        maxApertureValue: {
+            value: tags.MaxApertureValue.value,
+            description: tags.MaxApertureValue.description,
+        },
+        exposureTime: {
+            value: tags.ExposureTime.value,
+            description: tags.ExposureTime.description,
         }
-        modalMeta.style.display = 'block';
+    };
 
-        return callback();
-    }); */
+    for (let key in metaData) {
+        const metaInfoItem = document.createElement('p');
+        metaInfoItem.classList.add('p-0', 'm-0');
+        metaInfoItem.innerHTML = `<strong>${key}</strong>: <pre>${JSON.stringify(metaData[key], null, '\t')}</pre>`;
+        modalMeta.querySelector('.modal-body').appendChild(metaInfoItem);
+    }
+    modalMeta.style.display = 'block';
+
+    return Promise.resolve();
 }
 
 async function closePhotoMetaInfo() {
