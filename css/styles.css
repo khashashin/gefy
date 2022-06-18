@@ -101,6 +101,10 @@ footer {
     background-color: var(--color-light);
 }
 
+.card .card-body {
+    cursor: pointer;
+}
+
 .card .card-footer {
     display: flex;
     justify-content: space-between;
@@ -123,6 +127,8 @@ footer {
     margin-top: 0;
 
     padding: var(--spacing-small);
+
+    cursor: pointer;
 }
 
 .card img {
@@ -135,7 +141,8 @@ img.icon {
     height: 24px;
 }
 
-.modal {
+#modal-photos, 
+#modal-meta {
     width: 100vw;
     height: 100vh;
     position: absolute;
@@ -146,7 +153,8 @@ img.icon {
     display: none;
 }
 
-.modal .modal-content {
+#modal-photos .modal-content,
+#modal-meta .modal-content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -154,11 +162,12 @@ img.icon {
     height: 100%;
 }
 
-.modal .modal-content .modal-body {
+#modal-photos .modal-content .modal-body,
+#modal-meta .modal-content .modal-body {
     width: calc(100vw - var(--spacing-large));
 }
 
-.modal .modal-content .modal-body.meta-info {
+#modal-meta .modal-content .modal-body.meta-info {
     background-color: var(--color-light);
     border-radius: var(--border-radius-base);
     padding: var(--spacing-small);
@@ -168,8 +177,8 @@ img.icon {
     display: block;
 }
 
-.modal .modal-content .modal-body p {
-    font-size: calc(var(--font-size-small) - var(--spacing-small));
+#modal-photos img.photo.side-by-side {
+    max-width: 100%;
 }
 
 .beer-slider[data-beer-label]:after,
@@ -187,10 +196,6 @@ img.slide {
     color: var(--color-light);
 }
 
-.modal img.photo.side-by-side {
-    max-width: 100%;
-}
-
 .pdf.gefy {
     text-align: center;
 }
@@ -202,7 +207,8 @@ img.slide {
 
 
 @media (min-width: 768px) {
-    .modal .modal-content .modal-body {
+    #modal-photos .modal-content .modal-body,
+    #modal-meta .modal-content .modal-body {
         width: calc(90vw - var(--spacing-large) * 2);
     }
 }
@@ -219,7 +225,8 @@ img.slide {
         width: calc(380px - var(--spacing-large) * 2);
     }
 
-    .modal .modal-content .modal-body {
+    #modal-photos .modal-content .modal-body,
+    #modal-meta .modal-content .modal-body {
         display: flex;
         justify-content: center;
         width: calc(55vw - var(--spacing-large) * 2);

@@ -3,12 +3,68 @@ document.addEventListener('DOMContentLoaded', main, false);
 const body = document.querySelector('body');
 const html = document.querySelector('html');
 
+const modalPhotos = document.getElementById('modal-photos');
+const modalMeta = document.getElementById('modal-meta');
+
 let currentOriginalPhoto = null;
 let currentEditedPhoto = null;
 
+modalPhotos.querySelector('.icon.close').addEventListener('click', closePhotoComparisonWindow);
+modalPhotos.querySelector('.icon.compare').addEventListener('click', comparePhoto);
+modalPhotos.querySelector('.icon.slide').addEventListener('click', slidePhoto);
+modalMeta.querySelector('.icon.close').addEventListener('click', closePhotoMetaInfo)
+
+async function openPhotoModal(originalPath, editedPath) {
+    currentEditedPhoto = editedPath;
+    currentOriginalPhoto = originalPath;
+    
+    await sideBySideComparison();
+    modalPhotos.style.display = 'block';
+
+    return Promise.resolve();
+}
+
+async function displayMetaInfo(originalPath) {
+    await openPhotoMetaInfo(originalPath);
+
+    return Promise.resolve();
+}
+
+async function addCardClickEventListener(card) {
+    // disableScroll();
+
+    const cardBody = card.querySelector('.card-body');
+    const photo = cardBody.querySelector('img');
+
+    const originalPath = cardBody.dataset.path
+    const editedPath = cardBody.dataset.pathEdited
+
+    photo.addEventListener('click', async function() {
+        await openPhotoModal(originalPath, editedPath);
+    });
+
+    const cardFooter = card.querySelector('.card-footer');
+    const infoButton = cardFooter.querySelector('img');
+
+    infoButton.addEventListener('click', async function() {
+        await displayMetaInfo(originalPath, editedPath);
+    });
+}
+
+async function createCardAppendToSection(card, section) {
+    const c = document.createElement('div');
+    c.classList.add('card');
+    c.innerHTML = card;
+    section.appendChild(c);
+    
+    await addCardClickEventListener(c);
+
+    return Promise.resolve();
+}
+
 function main() {
     const mainWrapper = document.querySelector('main');
-    // Prepare sections
+    
     const sectionEleasar = document.createElement('section');
     const sectionYusuf = document.createElement('section');
     const sectionFranz = document.createElement('section');
@@ -17,159 +73,107 @@ function main() {
     sectionYusuf.classList.add('photos', 'yusuf');
     sectionFranz.classList.add('photos', 'franz');
 
-    // Append sections to the main element
     mainWrapper.prepend(sectionFranz);
     mainWrapper.prepend(sectionYusuf);
     mainWrapper.prepend(sectionEleasar);
 
+    // Load data from local file data.json
     fetch('assets/data-v2.json', {
         method: 'GET',
     }).then(response => {
         return response.json();
     }).then(data => {
 
+        // Data contains list of paths to original and edited photos
         for (let i = 0; i < data.length; i++) {
 
             let card = `
-                <div class="card">
-                    <div class="card-body" data-path="${data[i].path}" data-path-edited="${data[i].pathEdited}">
-                        <img src="${data[i].path}" alt="${data[i].data}">
-                    </div>
-                    <div class="card-footer">
-                        <p>${data[i].data}</p>
-                        <img class="icon info" src="../assets/icons/info.svg" data-path="${data[i].path}" data-path-edited="${data[i].pathEdited}">
-                    </div>
+                <div class="card-body" data-path="${data[i].path}" data-path-edited="${data[i].pathEdited}">
+                    <img src="${data[i].path}" alt="${data[i].data}">
+                </div>
+                <div class="card-footer">
+                    <p>${data[i].data}</p>
+                    <img class="icon info" src="../assets/icons/info.svg" data-path="${data[i].path}" data-path-edited="${data[i].pathEdited}">
                 </div>
             `;
 
-            // if data[i].path includes 'assets/img/e/'
+            // Append cards to the appropriate section
             if (data[i].path.includes('assets/img/e/')) {
-                sectionEleasar.innerHTML += card;
+                createCardAppendToSection(card, sectionEleasar);
             }
-            // if data[i].path includes 'assets/img/y/'
+            
             else if (data[i].path.includes('assets/img/y/')) {
-                sectionYusuf.innerHTML += card;
+                createCardAppendToSection(card, sectionYusuf);
             }
-            // if data[i].path includes 'assets/img/f/'
+            
             else if (data[i].path.includes('assets/img/f/')) {
-                sectionFranz.innerHTML += card;
+                createCardAppendToSection(card, sectionFranz);
             }
         }
     }).catch(error => {
         console.log(error);
-    }).finally(() => {
-        createEventListeners();
+    }).finally(async () => {
         const isLoading = document.querySelector('p#loading');
         isLoading.style.display = 'none';
     })
 }
 
-function createEventListeners() {
-    const cards = document.querySelectorAll('.card-body');
-    
-    for (let i = 0; i < cards.length; i++) {
-        const currentCard = cards[i];
-        const imageMetaInfoButton = currentCard.parentElement.querySelector('.card-footer').querySelector('.icon.info');
-
-        currentCard.addEventListener('click', function() {
-            currentOriginalPhoto = this.getAttribute('data-path');
-            currentEditedPhoto = this.getAttribute('data-path-edited');
-
-            openPhotoComparisonWindow(() => {
-                document.querySelector('.modal').querySelector('.icon.close').addEventListener('click', closePhotoComparisonWindow);
-                document.querySelector('.modal').querySelector('.icon.compare').addEventListener('click', comparePhoto);
-                document.querySelector('.modal').querySelector('.icon.slide').addEventListener('click', slidePhoto);
-            });
-        });
-
-        imageMetaInfoButton.addEventListener('click', function() {
-            openPhotoMetaInfo(this, () => {
-                document.querySelector('.modal').querySelector('.icon.close').addEventListener('click', closePhotoMetaInfo);
-            });
-        });
-    }
-}
-
-function openPhotoComparisonWindow(callback) {
+async function openPhotoComparisonWindow() {
     disableScroll();
 
-    sideBySideComparison();
+    await sideBySideComparison();
 
-    const mainWindow = document.querySelector('.modal');
-    const closeIcon = document.createElement('img');
-    const compareIcon = document.createElement('img');
-    const slideIcon = document.createElement('img');
-
-    closeIcon.classList.addMany('icon close');
-    closeIcon.src = '../assets/icons/close.svg';
-    compareIcon.classList.addMany('icon compare');
-    compareIcon.src = '../assets/icons/compare.svg';
-    slideIcon.classList.addMany('icon slide');
-    slideIcon.src = '../assets/icons/slide.svg';
-
-    if (mainWindow) {
-        mainWindow.querySelector('.modal-footer').appendChild(compareIcon);
-        mainWindow.querySelector('.modal-footer').appendChild(slideIcon);
-        mainWindow.querySelector('.modal-footer').appendChild(closeIcon);
-        mainWindow.style.display = 'block';
-        return callback();
-    }
+    return Promise.resolve();
 }
 
-function sideBySideComparison() {
+async function sideBySideComparison() {
 
-    restoreComparisonState((() => {
-        const mainWindow = document.querySelector('.modal');
-        const originalPhoto = document.createElement('img');
-        const editedPhoto = document.createElement('img');
+    await restoreComparisonState();
+
+    const originalPhoto = document.createElement('img');
+    const editedPhoto = document.createElement('img');
     
-        originalPhoto.classList.addMany('photo side-by-side');
-        editedPhoto.classList.addMany('photo side-by-side');
+    originalPhoto.classList.add('photo', 'side-by-side');
+    editedPhoto.classList.add('photo', 'side-by-side');
+    originalPhoto.src = currentOriginalPhoto;
+    editedPhoto.src = currentEditedPhoto;
+
+    modalPhotos.querySelector('.modal-body').appendChild(originalPhoto);
+    modalPhotos.querySelector('.modal-body').appendChild(editedPhoto);
+
+    return Promise.resolve();
+}
+
+async function sliderComparison() {
+
+    const originalPhoto = document.createElement('img');
+    const editedPhoto = document.createElement('img');
+    const editedPhotoWrapper = document.createElement('div');
+
+    await restoreComparisonState();
     
-        if (mainWindow) {
-            originalPhoto.src = currentOriginalPhoto;
-            editedPhoto.src = currentEditedPhoto;
-            mainWindow.querySelector('.modal-body').appendChild(originalPhoto);
-            mainWindow.querySelector('.modal-body').appendChild(editedPhoto);
-        }
-    }));
+    originalPhoto.src = currentOriginalPhoto;
+    editedPhoto.src = currentEditedPhoto;
+    originalPhoto.classList.add('photo');
+    editedPhoto.classList.add('photo');
+
+    modalPhotos.querySelector('.modal-body').classList.add('beer-slider');
+    modalPhotos.querySelector('.modal-body').id = 'slider';
+    modalPhotos.querySelector('.modal-body').dataset.beerLabel = 'before';
+    modalPhotos.querySelector('.modal-body').appendChild(originalPhoto);
+
+    editedPhotoWrapper.classList.add('beer-reveal');
+    editedPhotoWrapper.dataset.beerLabel = 'after';
+    editedPhotoWrapper.appendChild(editedPhoto);
+    modalPhotos.querySelector('.modal-body').appendChild(editedPhotoWrapper);
+
+    new BeerSlider(document.getElementById('slider'));
+
+    return Promise.resolve();
 }
 
-function sliderComparison() {
-
-    restoreComparisonState(() => {
-        const modal = document.querySelector('.modal-body');
-        const originalPhoto = document.createElement('img');
-        const editedPhoto = document.createElement('img');
-        const editedPhotoWrapper = document.createElement('div');
-        if (modal) {
-            originalPhoto.src = currentOriginalPhoto;
-            editedPhoto.src = currentEditedPhoto;
-            originalPhoto.classList.add('photo');
-            editedPhoto.classList.add('photo');
-
-            modal.classList.add('beer-slider');
-            modal.id = 'slider';
-            modal.dataset.beerLabel = 'before';
-            modal.appendChild(originalPhoto);
-
-            editedPhotoWrapper.classList.add('beer-reveal');
-            editedPhotoWrapper.dataset.beerLabel = 'after';
-            editedPhotoWrapper.appendChild(editedPhoto);
-            modal.appendChild(editedPhotoWrapper);
-
-            new BeerSlider(document.getElementById('slider'));
-        }
-    })
-}
-
-function restoreComparisonState(callback) {
-    const modal = document.querySelector('.modal');
-    if (modal === null) {
-        return;
-    }
-
-    const modalBody = modal.querySelector('.modal-body');
+async function restoreComparisonState() {
+    const modalBody = modalPhotos.querySelector('.modal-body');
     // clear modal body
     while (modalBody.firstChild) {
         modalBody.removeChild(modalBody.firstChild);
@@ -179,148 +183,101 @@ function restoreComparisonState(callback) {
     modalBody.classList.remove('beer-ready');
     delete modalBody.dataset.beerLabel;
 
-    return callback();
+    return Promise.resolve();
 }
 
-function closePhotoComparisonWindow() {
-    enableScroll();
+async function closePhotoComparisonWindow() {
+    await enableScroll();
 
-    const mainWindow = document.querySelector('.modal');
+    modalPhotos.style.display = 'none';
+    modalPhotos.querySelectorAll('.photo')
+        .forEach(photo => {
+            photo.remove();
+        }
+    );
 
-    if (mainWindow) {
-        mainWindow.style.display = 'none';
-        mainWindow.querySelectorAll('.photo')
-            .forEach(photo => {
-                photo.remove();
-            }
-        );
-        mainWindow.querySelector('.icon.close').removeEventListener('click', closePhotoComparisonWindow);
-        mainWindow.querySelector('.icon.compare').removeEventListener('click', comparePhoto);
-        mainWindow.querySelector('.icon.slide').removeEventListener('click', slidePhoto);
+    await restoreComparisonState();
+}
 
-        mainWindow.querySelectorAll('.icon')
-            .forEach(icon => {
-                icon.remove();
-            }
-        );
-    }
+async function openPhotoMetaInfo(originalPath) {
+    disableScroll();
+    const isLoading = document.getElementById('meta-info-loading');
+    isLoading.style.display = 'block';
 
-    restoreComparisonState(() => {
-        return;
+    const img = document.createElement('img');
+    img.src = originalPath;
+
+    getMetaInformation(img).then(() => {
+        isLoading.style.display = 'none';
     });
 }
 
-function openPhotoMetaInfo(that, callback) {
-    disableScroll();
+async function getMetaInformation(photo) {
+    // fetch image by image path from photo
+    const image = await fetch(photo.src);
 
-    const modal = document.querySelector('.modal');
-    const photo = document.createElement('img');
-    const closeIcon = document.createElement('img');
+    const tags = await ExifReader.load(image.url);
 
-    photo.src = that.parentElement.parentElement.querySelector('.card-body').getAttribute('data-path');
-    photo.style.display = 'none';
-    closeIcon.classList.addMany('icon close');
-    closeIcon.src = '../assets/icons/close.svg';
+    const metaData = {
+        iso: {
+            value: tags.ISOSpeedRatings.value,
+        },
+        maxApertureValue: {
+            value: tags.MaxApertureValue.value,
+            description: tags.MaxApertureValue.description,
+        },
+        exposureTime: {
+            value: tags.ExposureTime.value,
+            description: tags.ExposureTime.description,
+        }
+    };
 
-    modal.querySelector('.modal-body').classList.add('meta-info');
-
-    if (modal) {
-        EXIF.getData(photo, function() {
-            const metaData = {
-                brightnessValue: this.exifdata.BrightnessValue,
-                date: this.exifdata.DateTimeOriginal,
-                exposureMode: this.exifdata.ExposureMode,
-                exposureProgram: this.exifdata.ExposureProgram,
-                exposureTime: this.exifdata.ExposureTime,
-                fNumber: this.exifdata.FNumber,
-                flash: this.exifdata.Flash,
-                focalLength: this.exifdata.FocalLength,
-                focalLengthIn35mmFilm: this.exifdata.FocalLengthIn35mmFilm,
-                iso: this.exifdata.ISOSpeedRatings,
-                lightSource: this.exifdata.LightSource,
-                make: this.exifdata.Make,
-                maxApertureValue: this.exifdata.MaxApertureValue,
-                meteringMode: this.exifdata.MeteringMode,
-                model: this.exifdata.Model,
-                orientation: this.exifdata.Orientation,
-                sceneCaptureType: this.exifdata.SceneCaptureType,
-                software: this.exifdata.Software,
-                whiteBalance: this.exifdata.WhiteBalance
-            }
-
-            const metaInfoHeader = document.createElement('h4');
-            metaInfoHeader.innerHTML = 'Meta info';
-            modal.querySelector('.modal-body').appendChild(metaInfoHeader);
-
-            for (let key in metaData) {
-                const metaInfoItem = document.createElement('p');
-                metaInfoItem.classList.addMany('p-0 m-0');
-                metaInfoItem.innerHTML = `${key}: ${metaData[key]}`;
-                modal.querySelector('.modal-body').appendChild(metaInfoItem);
-            }
-
-            modal.querySelector('.modal-footer').appendChild(closeIcon);
-            modal.style.display = 'block';
-            return callback();
-        });
+    for (let key in metaData) {
+        const metaInfoItem = document.createElement('p');
+        metaInfoItem.classList.add('p-0', 'm-0');
+        metaInfoItem.innerHTML = `<strong>${key}</strong>: <pre>${JSON.stringify(metaData[key], null, '\t')}</pre>`;
+        modalMeta.querySelector('.modal-body').appendChild(metaInfoItem);
     }
+    modalMeta.style.display = 'block';
+
+    return Promise.resolve();
 }
 
-function closePhotoMetaInfo() {
-    enableScroll();
+async function closePhotoMetaInfo() {
+    await enableScroll();
 
-    const modal = document.querySelector('.modal');
-    const modalBody = modal.querySelector('.modal-body');
-    if (modal) {
-        modal.style.display = 'none';
-        modalBody.querySelectorAll('p')
-            .forEach(p => {
-                p.remove();
-            }
-        );
-        modal.querySelector('.icon.close').removeEventListener('click', closePhotoMetaInfo);
-        modal.querySelectorAll('.icon')
-            .forEach(icon => {
-                icon.remove();
-            }
-        );
-        modalBody.querySelector('h4').remove();
-        modalBody.classList.remove('meta-info');
-    }
+    modalMeta.style.display = 'none';
+    modalMeta.querySelectorAll('p')
+        .forEach(p => {
+            p.remove();
+        }
+    );
 }
 
-function comparePhoto() {
-    sideBySideComparison();
+async function comparePhoto() {
+    await sideBySideComparison();
+
+    modalPhotos.style.display = 'block';
+
+    return Promise.resolve();
 }
 
-function slidePhoto() {
-    sliderComparison();
+async function slidePhoto() {
+    await sliderComparison();
+
+    modalPhotos.style.display = 'block';
+
+    return Promise.resolve();
 }
 
 function disableScroll() {
     body.style.overflowX = 'hidden';
-    body.style.overflowY = 'auto';
     html.style.overflowX = 'hidden';
-    html.style.overflowY = 'auto';
 }
 
-function enableScroll() {
+async function enableScroll() {
     body.style.overflowX = 'auto';
-    body.style.overflowY = 'auto';
     html.style.overflowX = 'auto';
-    html.style.overflowY = 'auto';
-}
 
-DOMTokenList.prototype.addMany = function(classes) {
-    var array = classes.split(' ');
-    for (var i = 0, length = array.length; i < length; i++) {
-      this.add(array[i]);
-    }
-}
-
-DOMTokenList.prototype.removeMany = function(classes) {
-    var array = classes.split(' ');
-    for (var i = 0, length = array.length; i < length; i++) {
-      this.remove(array[i]);
-    }
+    return Promise.resolve();
 }
