@@ -1,0 +1,100 @@
+  <!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="../../css/bootstrap-utilities.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/beerslider/dist/BeerSlider.css">
+    <link rel="stylesheet" href="../../css/styles.css">
+
+    <title>GEFY | Franz</title>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <h1><a href="/">GEFY</a></h1>
+            <div>
+                Portfolios:
+                <a href="../eleasar/portfolio.html">Eleasar</a>
+                <a href="../franz/portfolio.html">Franz</a>
+                <a href="../yusuf/portfolio.html">Yusuf</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- js content -->
+        <!-- photos -->
+        <p id="loading">Loading...</p>
+        <section>
+            <h2>Film</h2>
+            <h3>Szene 4</h3>
+            <div class="embed-responsive embed-responsive-16by9">
+                <video width="100%" class="embed-responsive-item" src="video/szene_1.mp4" allowfullscreen
+                    controls></video>
+            </div>
+        </section>
+        <section>
+            <h2>Dokumente</h2>
+            <h3>Datentypen</h3>
+            <iframe
+                src="https://docs.google.com/viewer?url=https://inf-152-19e-gefy.iet-gibb.net/portfolios/farnz/docs/Dateitypen.pdf&amp;embedded=true"
+                width="100%" height="780" style="border: none;"></iframe>
+            <a href="docs/Dateitypen.pdf">
+                Download Dateiypen PDF
+            </a>
+            <h3>Frameworks Plugins Skripte</h3>
+            <iframe
+                src="https://docs.google.com/viewer?url=https://inf-152-19e-gefy.iet-gibb.net/portfolios/franz/docs/Frameworks_Plugins_Scripts_152.pdf&amp;embedded=true"
+                width="100%" height="780" style="border: none;"></iframe>
+            <a href="docs/Frameworks_Plugins_Scripts_152.pdf">
+                Download Frameworks Plugins Skripte PDF
+            </a>
+            <h3>Gesetzliche Grundlage</h3>
+            <iframe
+                src="https://docs.google.com/viewer?url=https://inf-152-19e-gefy.iet-gibb.net/portfolios/franz/docs/Rechtliche Grundlage.pdf&amp;embedded=true"
+                width="100%" height="780" style="border: none;"></iframe>
+            <a href="docs/Rechtliche Grundlagen.pdf">
+                Download Rechtliche Grundlagen PDF
+            </a>
+        </section>
+    </main>
+
+    <footer class="text-center">
+        <p>&copy; 2020 GEFY</p>
+    </footer>
+
+    <div id="modal-photos" class="modal">
+        <div class="modal-content">
+            <div class="modal-body mb-2">
+            </div>
+            <div class="modal-footer">
+                <img class="icon compare" src="../../assets/icons/compare.svg">
+                <img class="icon slide" src="../../assets/icons/slide.svg">
+                <img class="icon close" src="../../assets/icons/close.svg">
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-meta" class="modal">
+        <div class="modal-content">
+            <div class="modal-body mb-2 meta-info">
+                <h4>Meta info</h4>
+                <i id="meta-info-loading">Loading meta information...</i>
+            </div>
+            <div class="modal-footer">
+                <img class="icon close" src="../../assets/icons/close.svg">
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/exif-reader.js"></script>
+    <script src="https://unpkg.com/beerslider/dist/BeerSlider.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
